@@ -13,7 +13,7 @@ POWER
 
 typedef struct {
 Rectangle PlayerCol;
-bool didjump;
+bool DidJump;
 double Xspeed;
 double Yspeed;
 double Xaccel;
@@ -88,6 +88,7 @@ bool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start) {
     }
 
     return false;
+//this was made by AI, no wonder why it is so clean, though the thing is that some problems would be because of it
 }
 
 /*
@@ -105,18 +106,24 @@ P1.PlayerCol =(Rectangle){130.0f, 612.5f-43.75f*6, 43.75f, 43.75f};
 P1.Xspeed = 0;
 P1.Xaccel = 0;
 P1.Yspeed = 0.0f;
-P1.Yaccel = 0.25f;
-unsigned long long dummy_var1 = 0;
+P1.Yaccel = 0.156f;
+P1.DidJump = true;
+Camera2D camera = { 0 };
+camera.target = (Vector2){P1.PlayerCol.x, P1.PlayerCol.y};
+camera.offset = (Vector2){ 700 / 2, 700 / 2.0f};
+camera.rotation = 0.0f;
+camera.zoom = 1.0f;
 Rectangle GroundBlock = (Rectangle){0.0f, 612.5f, 43.75f, 43.75f};
 BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){0.0f, 612.5f}, (Vector2){700.0f, 612.5f+43.75f*2});
 while (!WindowShouldClose()) {
-  dummy_var1 += 1;
-  if (dummy_var1 % 8 == 0) {
-    
-  }
   //logic
    //here it goes the list of collisions with the blocks and structures:
    P1.DidCollideY = CheckGridCollision(P1.PlayerCol, ground1, (Vector2){ground1[0].Block.x, ground1[0].Block.y});
+
+
+   if (P1.DidCollideY) {
+     P1.DidJump = false;
+   }
   if (IsKeyDown(KEY_RIGHT)) {
     P1.Xaccel += 0.25f;
     if ((P1.Xspeed >= 2.5f)  && (!IsKeyDown(KEY_LEFT)))  {
@@ -145,18 +152,24 @@ while (!WindowShouldClose()) {
   //NOTE:putting acceleration with the X axis movement is an very shitty idea,
   //because of floating point error this is extremely sensitive.
 
-  if (!P1.DidCollideY) {
-    P1.Yspeed += P1.Yaccel;
-  } else { 
+  if (P1.DidCollideY) {
     P1.Yspeed = 0; 
     P1.DidCollideY = false;
+  } else {  
+    P1.Yspeed += P1.Yaccel; 
   }
-
+  if ((IsKeyPressed(KEY_SPACE) && (!P1.DidJump))) {
+    P1.Yspeed = -7.5;
+    P1.DidJump = true;
+  }
   printf("%f\n", P1.Xspeed);
   printf("%f\n", P1.Xaccel); 
+  printf("\n");
   printf("%f\n", P1.Yspeed);
   printf("%f\n", P1.Yaccel); 
-  
+  printf("\n");
+  printf("%f\n", P1.PlayerCol.y);
+
   P1.PlayerCol.x += P1.Xspeed;
   P1.Xspeed += P1.Xaccel;
   P1.PlayerCol.y += P1.Yspeed;
@@ -165,6 +178,8 @@ while (!WindowShouldClose()) {
   ClearBackground(BLACK);
   DrawText("testing nga", 10, 10, 10, WHITE);
   DrawRectangleRec(P1.PlayerCol, WHITE);
+
+  //enemies render
   for (int i = 0; i < ground1[0].BlockStructureHeight;i++) {
     for (int j = 0; j < ground1[0].BlockStructureWidth;j++) {
       if ((j % 2 == 1) != (i % 2 == 1)){
@@ -180,3 +195,5 @@ CloseWindow();
 free(ground1);
 return 0;
 }
+
+//THIS IS WORK IN PROGRESS
