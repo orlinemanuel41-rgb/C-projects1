@@ -108,17 +108,35 @@ P1.Xaccel = 0;
 P1.Yspeed = 0.0f;
 P1.Yaccel = 0.156f;
 P1.DidJump = true;
+
 Camera2D camera = { 0 };
-camera.target = (Vector2){P1.PlayerCol.x, P1.PlayerCol.y};
-camera.offset = (Vector2){ 700 / 2, 700 / 2.0f};
+camera.target = (Vector2){0, 0};
+camera.offset = (Vector2){ 0.0f, 0.0f};
 camera.rotation = 0.0f;
 camera.zoom = 1.0f;
+
 Rectangle GroundBlock = (Rectangle){0.0f, 612.5f, 43.75f, 43.75f};
 BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){0.0f, 612.5f}, (Vector2){700.0f, 612.5f+43.75f*2});
 while (!WindowShouldClose()) {
-  //logic
+  /*       GGGG I  CCCCC
+   L   OOO G       C
+   L   O O G GG I  C   
+   L   O O G  G I  C
+   LLL OOO GGGG I  CCCCC
+  */
    //here it goes the list of collisions with the blocks and structures:
    P1.DidCollideY = CheckGridCollision(P1.PlayerCol, ground1, (Vector2){ground1[0].Block.x, ground1[0].Block.y});
+  
+   
+  double center_POV = camera.target.x + 300.0f; //300 is a magic num, somehow it works to not make the player turn back
+  printf("%f\n", center_POV);
+  if ((P1.Xspeed > 0) && (P1.PlayerCol.x > center_POV)) {
+  camera.target = (Vector2){P1.PlayerCol.x-300, 0.0f}; // same goes here, this just works, ok?
+  }
+   if (P1.PlayerCol.x < camera.target.x + (43.75f / 2)) {
+    P1.PlayerCol.x = camera.target.x + (43.75f / 2.0f);
+  }
+  //the camera "logic" is the closest thing to nonsense i've ever made
 
 
    if (P1.DidCollideY) {
@@ -173,9 +191,11 @@ while (!WindowShouldClose()) {
   P1.PlayerCol.x += P1.Xspeed;
   P1.Xspeed += P1.Xaccel;
   P1.PlayerCol.y += P1.Yspeed;
- 
+  EndMode2D();
   BeginDrawing();
   ClearBackground(BLACK);
+
+  BeginMode2D(camera);
   DrawText("testing nga", 10, 10, 10, WHITE);
   DrawRectangleRec(P1.PlayerCol, WHITE);
 
