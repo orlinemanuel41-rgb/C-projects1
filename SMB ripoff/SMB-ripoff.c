@@ -20,6 +20,7 @@ double Xaccel;
 double Yaccel;
 bool DidCollideX;
 bool DidCollideY;
+bool IsRunning;
 PlayerState state;
 } player;
 
@@ -108,7 +109,7 @@ P1.Xaccel = 0;
 P1.Yspeed = 0.0f;
 P1.Yaccel = 0.156f;
 P1.DidJump = true;
-
+P1.IsRunning = false;
 Camera2D camera = { 0 };
 camera.target = (Vector2){0, 0};
 camera.offset = (Vector2){ 0.0f, 0.0f};
@@ -117,6 +118,8 @@ camera.zoom = 1.0f;
 
 Rectangle GroundBlock = (Rectangle){0.0f, 612.5f, 43.75f, 43.75f};
 BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){0.0f, 612.5f}, (Vector2){700.0f, 612.5f+43.75f*2});
+
+double MoveSpeed = 2.5f;
 while (!WindowShouldClose()) {
   /*       GGGG I  CCCCC
    L   OOO G       C
@@ -142,30 +145,33 @@ while (!WindowShouldClose()) {
    if (P1.DidCollideY) {
      P1.DidJump = false;
    }
+
+  if (IsKeyDown(KEY_LEFT_SHIFT)) {
+    MoveSpeed = 3.75f;
+    P1.IsRunning = true;
+  } else {
+    MoveSpeed = 2.5f;
+  }
+
   if (IsKeyDown(KEY_RIGHT)) {
     P1.Xaccel += 0.25f;
-    if ((P1.Xspeed >= 2.5f)  && (!IsKeyDown(KEY_LEFT)))  {
+    if ((P1.Xspeed >= MoveSpeed)  && (!IsKeyDown(KEY_LEFT)))  {
       P1.Xaccel = 0;
-      P1.Xspeed = 2.5f;
+      P1.Xspeed = MoveSpeed;
       }
-    } else {
-    if (P1.Xspeed > 0) {
-      P1.Xaccel = 0;
-      P1.Xspeed -= 0.25f;
-    }
-  } 
+    } 
 
   if (IsKeyDown(KEY_LEFT)) {
     P1.Xaccel -= 0.25f;
-    if (P1.Xspeed <= -2.5f) {
+    if (P1.Xspeed <= -MoveSpeed) {
       P1.Xaccel = 0;
-      P1.Xspeed = -2.5f;
+      P1.Xspeed = -MoveSpeed;
       }
-    } else {
-    if (P1.Xspeed < 0) {
-      P1.Xaccel = 0;
-      P1.Xspeed += 0.25f;
     }
+
+  if (!IsKeyDown(KEY_RIGHT) &&  !IsKeyDown(KEY_LEFT)) {
+      P1.Xaccel = 0;
+      P1.Xspeed = Lerp(P1.Xspeed, 0.0f, 0.2f);
   }
   //NOTE:putting acceleration with the X axis movement is an very shitty idea,
   //because of floating point error this is extremely sensitive.
