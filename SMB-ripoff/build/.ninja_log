@@ -1,0 +1,7 @@
+# ninja log v7
+167	1252	8126969962604591	CMakeFiles/my_game.dir/main.c.obj	9190c7f9afc288f0
+1255	2316	8126969973383340	my_game.exe	70003c7c923f1681
+13	1000	8126972187980926	build.ninja	105e899ba2a3fa4e
+13	1000	8126972187980926	C:/Users/Usuario/OneDrive/Documents/GitHub/C-projects/SMB-ripoff/build/cmake_install.cmake	105e899ba2a3fa4e
+112	983	8126972192354923	CMakeFiles/main.dir/main.c.obj	27b75f32b62dd686
+986	2034	8126972201102860	main.exe	e16cf6cfa0bbc25a

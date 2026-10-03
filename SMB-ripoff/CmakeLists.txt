@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.15)
+project(raylib_block_game C)
+
+set(CMAKE_C_STANDARD 99)
+
+# 1. Find raylib installed via MSYS2
+find_package(raylib REQUIRED)
+
+# 2. Add your C files and your custom header
+add_executable(main main.c blocklib.h)
+
+# 3. Look in the current folder for blocklib.h
+target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+# 4. Link raylib into your game
+target_link_libraries(main PRIVATE raylib)
