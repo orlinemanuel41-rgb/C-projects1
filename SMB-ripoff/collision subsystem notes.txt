@@ -1,0 +1,40 @@
+Platformer Collision System—Notes
+
+Core idea: Collision is a geometric correction , not a repulsive force. 
+Use the same system for floors, ceilings, walls, and all other static objects .
+
+For every collision:
+
+1. Detect overlap
+2. Get:
+   - collision normal
+   - penetration depth
+
+3. Push player out:
+   position += normal * penetration
+
+4. Remove velocity going INTO the surface:
+   vn = dot(velocity, normal)
+
+   if vn < 0:
+       velocity -= normal * vn
+Normals
+
+The normal points from the object toward the player :
+
+Floor:    ( 0, -1)
+Ceiling:  ( 0,  1)
+Left:     ( 1,  0)
+Right:    (-1,  0)
+
+Therefore don't hardcode y -= penetrationor similar . Always use the normal.
+
+Gameplay classification
+
+The collision system itself doesn't care what was hit. After resolving:
+
+normal.y < -0.7  → grounded / floor
+normal.y >  0.7  → ceiling
+abs(normal.x)>.7 → wall
+
+This lets platformer mechanics react differently without having separate collision algorithms.

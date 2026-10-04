@@ -99,4 +99,3 @@ bool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start) {
 //also atleast the logic was idea of mine, the implementation was by the clanker
 }
 
-
