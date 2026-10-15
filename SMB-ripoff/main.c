@@ -82,6 +82,24 @@ int DrawBlockCol(BlockUnit* BlockStruct, int mode) {
   }   
   return 0;
 }
+
+player ResolveCollision(player P, ColBool col) {
+  if (col.boolean) {
+    P.PlayerCol.x += col.normal.x * (float)col.penetration;
+    P.PlayerCol.y += col.normal.y * (float)col.penetration;
+    if (col.normal.y < 0) {
+      P.DidCollideY = true;
+      P.Yspeed = 0;
+    } else if (col.normal.y > 0) {
+      P.Yspeed = 0;
+    }
+    if (col.normal.x != 0) {
+      P.Xspeed = 0;
+    }
+  }
+  return P;
+}
+
 /*
 TTTTT H   H EEEEE       M       M      A    IIIIII  N    N
   T   H   H E           MM     MM     A A      I    N N  N
@@ -110,9 +128,11 @@ camera.zoom = 1.0f;
 //LEVEL GEN
 Rectangle GroundBlock = (Rectangle){0.0f, 612.5f, BLOCKSIZE, BLOCKSIZE};
 
-BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*0, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*32, BLOCKSIZE*17});
-BlockUnit* platform1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*21, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*25, BLOCKSIZE*11});
 
+BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*0, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*32, BLOCKSIZE*17});
+BlockUnit* platform1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*21, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*26, BLOCKSIZE*11});
+
+ColBool ground1CB; ColBool platform1CB;
 while (!WindowShouldClose()) {
   /*       GGGG I  CCCCC
    L   OOO G       C
@@ -121,12 +141,14 @@ while (!WindowShouldClose()) {
    LLL OOO GGGG I  CCCCC
   */
    //here it goes the list of collisions with the blocks and structures:
- 
-   P1.DidCollideY =
-                   CheckGridCollision(P1.PlayerCol, ground1, (Vector2){ground1[0].Block.x, ground1[0].Block.y}) ||
-                   CheckGridCollision(P1.PlayerCol, platform1, (Vector2){platform1[0].Block.x, platform1[0].Block.y});
-  
-   
+     //since i need collision normal and somehow it didn't came up to my mind doing a single dynamic array of arrays for the whole level 
+     //now i have to do a collision per blockstruct, shitty 
+
+  ground1CB = CheckGridCollision(P1.PlayerCol, ground1, (Vector2){ground1[0].Block.x, ground1[0].Block.y});
+  platform1CB = CheckGridCollision(P1.PlayerCol, platform1, (Vector2){platform1[0].Block.x, platform1[0].Block.y});
+
+  P1 = ResolveCollision(P1, ground1CB);
+  P1 = ResolveCollision(P1, platform1CB);  
   double center_POV = camera.target.x + 300.0f; //300 is a magic num, somehow it works to not make the player turn back
   printf("%f\n", center_POV);
   if ((P1.Xspeed > 0) && (P1.PlayerCol.x > center_POV)) {
