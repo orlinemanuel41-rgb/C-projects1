@@ -64,7 +64,8 @@ player PlayerMove(player Player) {
  return Player; 
 }
 
-int DrawBlockCol(BlockUnit* BlockStruct, int mode) { 
+int DrawBlockCol(BlockUnit* BlockStruct, int mode) {
+  	
   //this one no matter the type it just draws a checker pattern to differentiate stuff
   if (mode == 0) {
     for (int i = 0; i < BlockStruct[0].BlockStructureHeight;i++) {
@@ -78,7 +79,13 @@ int DrawBlockCol(BlockUnit* BlockStruct, int mode) {
       }
   //this one based on blocktype assigns a different color
   } else if (mode == 1) {
-    return 0;
+    for (int i = 0; i < BlockStruct[0].BlockStructureHeight;i++) {
+      for (int j = 0; j < BlockStruct[0].BlockStructureWidth;j++) {
+        if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == GroundBlock) {
+          DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, BLUE);
+        } else { DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, MAGENTA); }
+      } 
+    }  
   }   
   return 0;
 }
@@ -99,6 +106,10 @@ player ResolveCollision(player P, ColBool col) {
   }
   return P;
 }
+
+//BlockUnit* SetBlockUnitType(BlockUnit* Block, int Row, int Col) {
+  //WIP
+//}
 
 /*
 TTTTT H   H EEEEE       M       M      A    IIIIII  N    N
@@ -126,12 +137,13 @@ camera.zoom = 1.0f;
 
 
 //LEVEL GEN
-Rectangle GroundBlock = (Rectangle){0.0f, 612.5f, BLOCKSIZE, BLOCKSIZE};
+Rectangle the_Block = (Rectangle){0.0f, 612.5f, BLOCKSIZE, BLOCKSIZE};
 
-
-BlockUnit* ground1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*0, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*32, BLOCKSIZE*17});
-BlockUnit* platform1 = MakeBlockStructure(GroundBlock, (Vector2){BLOCKSIZE*21, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*26, BLOCKSIZE*11});
-
+BlockUnit* ground1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*0, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*32, BLOCKSIZE*17});
+BlockUnit* platform1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*21, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*26, BLOCKSIZE*11});
+for (int i = 0; i < (ground1[0].BlockStructureWidth*ground1[0].BlockStructureHeight)-1;i++) {
+  ground1[i].type = GroundBlock; //GroundBlock is the enum obj, the_Block is the boilerplate of ANY BlockStructure
+} //why this shit so ungodly bugged???
 ColBool ground1CB; ColBool platform1CB;
 while (!WindowShouldClose()) {
   /*       GGGG I  CCCCC
@@ -167,7 +179,7 @@ while (!WindowShouldClose()) {
   DrawRectangleRec(P1.PlayerCol, WHITE);
 
   //Block render
-  DrawBlockCol(ground1, 0); DrawBlockCol(platform1, 0);
+  DrawBlockCol(ground1, 1); DrawBlockCol(platform1, 1);
   EndDrawing();
   EndMode2D();
   }
