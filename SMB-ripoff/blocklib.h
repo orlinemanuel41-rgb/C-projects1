@@ -14,10 +14,12 @@ POWER
 typedef enum {
 ColBlock = 0, //only used for collision, while drawing irrelevant
 PowerBlock,
+NoPowerBlock,
 GroundBlock,
 BreakableBlock,
 PipeCol, //i am NOT about to make that the pipe leads to another scenario since this would be just a single scenario
-	 //although honestly i can do that easily with a couple if statements
+	 //although honestly i can do that easily with a couple if statements but i'm lazy
+EmptyBlock
 } BlockType;
 
 typedef struct {
@@ -30,6 +32,7 @@ double Yaccel;
 bool DidCollideX;
 bool DidCollideY;
 bool IsRunning;
+bool DidFunc; //func is basically to break breakable blocks and to release the power up or transform in non-powerblocks
 PlayerState state;
 } player;
 
@@ -44,6 +47,7 @@ typedef struct {
 bool boolean;
 Vector2 normal;
 double penetration;
+int BlockIndex;
 } ColBool;
 
 BlockUnit* MakeBlockStructure(Rectangle Block, Vector2 Start, Vector2 End) {
@@ -84,14 +88,14 @@ ColBool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start
 
   //basically turning the target's  (player and entities) coordinate position into grid position 
   //and as i'm truncating also turning it into the gridblocks the player intersects
-  //for instance if player at (90,90) it intersects gridblocks (1,1), (1,2), (2,1), (2,2) since the range would be x from 46.25 / 43.75 (i think so) 
-  //truncated 1 to 90 / 43.75, 90 since width is added or basically truncated 2, exact same with y so x from 1 to 2, y from 1 to 2
+  //for instance if player at (90,90) it intersects gridblocks (1,1), (1,2), (2,1), (2,2) since the range would be x from ((90-43.75) = 46.25) / 43.75
+  //truncated 1 to 90 / 43.75, 90 since width is added, or basically truncated 2, exact same with y so x from 1 to 2, y from 1 to 2
   int minCol = (int)((target.x - start.x) / blockWidth);
   int maxCol = (int)((target.x + target.width - start.x) / blockWidth);
   int minRow = (int)((target.y - start.y) / blockHeight);
   int maxRow = (int)((target.y + target.height - start.y) / blockHeight);
 
-  //if the player is colliding negatively with a block (penetrating) this turns 
+  //if the player is colliding negatively with a block (penetrating) this turns 0 
   if (minCol < 0) minCol = 0;
   if (maxCol >= gridWidth) maxCol = gridWidth - 1;
   if (minRow < 0) minRow = 0;
@@ -102,11 +106,11 @@ ColBool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start
     return Collision;
   }
 
-  //minimal penetration cuz if not then float error, also init found col
+  //minimal penetration cuz if not then float error, also init foundcol
   float minPenetration = 1e9f;
   bool foundCollision = false;
   Vector2 bestNormal = { 0.0f, 0.0f };
- 
+  int bestIndex = -1; 
   //the check loop, basically checks if in the grid there is already something in the range the cube overlaps, 
   //with the last example since it is <= not < the overlap are registeded as (1,1), (2,1), (1,2) and (2,2) which are the correct ones
   for (int i = minRow; i <= maxRow; i++) {
@@ -114,6 +118,8 @@ ColBool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start
 
       //translation so can get into my pseudo 2D matrix
       int index = (i * gridWidth) + j;
+
+      if (structure[index].type == EmptyBlock) { continue; }
       Rectangle block = structure[index].Block;
 
       //our protagonist Check collisions rect as an if statement since we also want penetration and normal
@@ -144,21 +150,24 @@ ColBool CheckGridCollision(Rectangle target, BlockUnit* structure, Vector2 start
         if (!foundCollision || currentPenetration < minPenetration) {
           minPenetration = currentPenetration;
           bestNormal = currentNormal;
+	  bestIndex = index;
           foundCollision = true;
           }
         }
       }
     }
   }
-  //if there is collision (after all big ol' if statement, we set that there is, indeed a collision, the penetration from min and the normal
+  //if there is collision (after all big ol' if statement, we set that there is, indeed a collision, the penetration from min, normal and the index
   if (foundCollision) {
     Collision.boolean = true;
     Collision.penetration = (double)minPenetration;
     Collision.normal = bestNormal;
+    Collision.BlockIndex = bestIndex;
   }
 
   return Collision;
 }
 //this was (partially) made by AI, no wonder why it is so clean, though the thing is that some problems would be because of it,
 //also atleast the logic was idea of mine, the implementation was by the clanker
+
 
