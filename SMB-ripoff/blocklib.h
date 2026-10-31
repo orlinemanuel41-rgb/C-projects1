@@ -55,7 +55,7 @@ BlockUnit* MakeBlockStructure(Rectangle Block, Vector2 Start, Vector2 End) {
   int BlockStructureHeight  = (int)((End.y - Start.y) / Block.height); 
 
   BlockUnit* BlockStructure = (BlockUnit*)malloc(sizeof(BlockUnit)*((BlockStructureWidth*BlockStructureHeight)));
-
+  if (BlockStructure == NULL) { return 0; } 
   for (int i = 0; i < BlockStructureHeight;i++) { 
     for (int j = 0; j < BlockStructureWidth;j++) {
       BlockStructure[(i*BlockStructureWidth)+j].Block = (Rectangle){(float)Start.x + (j*Block.width),(float)Start.y + (i*Block.height),Block.width,Block.height}; //line too large TBH

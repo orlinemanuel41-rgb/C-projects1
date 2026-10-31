@@ -98,7 +98,7 @@ int DrawBlockCol(BlockUnit* BlockStruct, int mode) {
 	} else if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == PipeCol) {
           DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, GREEN);
         } else if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == EmptyBlock) {
-       
+          //if i do nothing it doesn't get drawn, that easy
         } else { DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, MAGENTA); }
       } 
     }  
@@ -180,14 +180,26 @@ Rectangle the_Block = (Rectangle){0.0f, 612.5f, BLOCKSIZE, BLOCKSIZE};
 
 BlockUnit* ground1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*0, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*32, BLOCKSIZE*17});
 BlockUnit* platform1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*21, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*26, BLOCKSIZE*11});
-for (int i = 0; i < (ground1[0].BlockStructureWidth*ground1[0].BlockStructureHeight)-1;i++) {
-  ground1[i].type = GroundBlock; //the_Block a the boilerplate of ANY BlockStructure
-} 
+BlockUnit* powerblockA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*17, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*18, BLOCKSIZE*11});
+BlockUnit* powerblockA2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*23, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*24, BLOCKSIZE*7});
+BlockUnit* PipeColA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*29, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*31, BLOCKSIZE*14});
 
+BlockUnit* ground2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*32, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*71, BLOCKSIZE*17});
+BlockUnit* PipeColB1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*41, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*43, BLOCKSIZE*14});
+BlockUnit* PipeColB2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*49, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*51, BLOCKSIZE*14});
+BlockUnit* PipeColB3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*60, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*62, BLOCKSIZE*14});
+BlockUnit* hidPowBlock1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*67, BLOCKSIZE*9}, (Vector2){BLOCKSIZE*68, BLOCKSIZE*10});
+
+BlockUnit* ground3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*73, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*88, BLOCKSIZE*17});
+
+
+BlockUnit* ground4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*90, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*138, BLOCKSIZE*17});
+//here i stopped, this is basically from the third ground where there's the star to the second mini block stairs
 //first bill of setting blocktypes
-SBTall(platform1, BreakableBlock);
-SBT(platform1, 0, 1, PowerBlock); SBT(platform1, 0, 3, PowerBlock);
-ColBool ground1CB; ColBool platform1CB;
+SBTall(ground1, GroundBlock); SBTall(platform1, BreakableBlock);
+SBT(platform1, 0, 1, PowerBlock); SBT(platform1, 0, 3, PowerBlock); SBTall(powerblockA1, PowerBlock); SBTall(powerblockA2, PowerBlock); 
+SBTall(PipeColA1, PipeCol); SBTall(ground2, GroundBlock); SBTall(PipeColB1, PipeCol); SBTall(PipeColB2, PipeCol); SBTall(PipeColB3, PipeCol); SBTall(hidPowBlock1, PowerBlock); SBTall(ground3, GroundBlock);
+
 while (!WindowShouldClose()) {
   /*       GGGG I  CCCCC
    L   OOO G       C
@@ -200,8 +212,17 @@ while (!WindowShouldClose()) {
      //now i have to do a collision per blockstruct, shitty 
   P1 = PlayerMove(P1);
 
+  //collision for general blockstruct
   P1 = ResolveCollision(P1, ground1);
   P1 = ResolveCollision(P1, platform1); 
+
+  P1 = ResolveCollision(P1, ground2);
+  P1 = ResolveCollision(P1, ground3);
+  P1 = ResolveCollision(P1, ground4);
+  //collision for indv blockstruct
+  P1 = ResolveCollision(P1, powerblockA1); P1 = ResolveCollision(P1, powerblockA2); P1 = ResolveCollision(P1, PipeColA1);
+  P1 = ResolveCollision(P1, PipeColB1); P1 = ResolveCollision(P1, PipeColB2); P1 = ResolveCollision(P1, PipeColB3); P1 = ResolveCollision(P1, hidPowBlock1);
+  
   printf("%f\n", P1.Xaccel);
   double center_POV = camera.target.x + 300.0f; //300 is a magic num, somehow it works to not make the player turn back
   printf("%f\n", center_POV);
@@ -220,12 +241,15 @@ while (!WindowShouldClose()) {
   DrawRectangleRec(P1.PlayerCol, WHITE);
 
   //Block render
-  DrawBlockCol(ground1, 1); DrawBlockCol(platform1, 1);
+  DrawBlockCol(ground1,1); DrawBlockCol(platform1,1); DrawBlockCol(powerblockA1,1); DrawBlockCol(powerblockA2,1); DrawBlockCol(PipeColA1,1);
+  DrawBlockCol(ground2,1); DrawBlockCol(PipeColB1,1); DrawBlockCol(PipeColB2,1); DrawBlockCol(PipeColB3,1); 
+  DrawBlockCol(ground3,1);DrawBlockCol(ground4,1);
+  if (hidPowBlock1[0].type == PowerBlock) { } else {DrawBlockCol(hidPowBlock1, 1); }
   EndDrawing();
   EndMode2D();
   }
 CloseWindow();
-free(ground1);
+free(ground1); free(ground2); free(ground3); free(ground4); free(platform1); free(powerblockA1); free(powerblockA2); free(PipeColA1); free(PipeColB1); free(PipeColB2); free(PipeColB3); free(hidPowBlock1);
 return 0;
 }
 
