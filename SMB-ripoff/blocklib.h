@@ -12,14 +12,15 @@ POWER
 } PlayerState;
 
 typedef enum {
-ColBlock = 0, //only used for collision, while drawing irrelevant
+ColBlock = 0, //this would probably be unused TBH...
 PowerBlock,
 NoPowerBlock,
 GroundBlock,
 BreakableBlock,
 PipeCol, //i am NOT about to make that the pipe leads to another scenario since this would be just a single scenario
 	 //although honestly i can do that easily with a couple if statements but i'm lazy
-EmptyBlock
+EmptyBlock,
+HardBlock //those stairs unbreakable blocks
 } BlockType;
 
 typedef struct {

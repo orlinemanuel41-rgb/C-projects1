@@ -6,7 +6,8 @@
 #include"blocklib.h"
 
 #define BLOCKSIZE 43.75f
-Color BRICKBROWN = { 146, 75, 20, 255 }; 
+Color BRICKBROWN = { 146, 75, 20, 255 };
+Color HARDBROWN = { 123, 63, 0, 255 };
 double MoveSpeed = 2.5f;
 double JumpingStrength = 7.5f;
 player PlayerMove(player Player) {
@@ -103,12 +104,15 @@ int DrawBlockCol(BlockUnit* BlockStruct, int mode) {
           DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, BROWN);
 	} else if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == PipeCol) {
           DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, GREEN);
+	} else if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == HardBlock) {
+          DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, HARDBROWN);
         } else if (BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].type == EmptyBlock) {
           //if i do nothing it doesn't get drawn, that easy
         } else { DrawRectangleRec(BlockStruct[(i*BlockStruct[0].BlockStructureWidth)+j].Block, MAGENTA); }
       } 
     }  
-  }   
+  }  
+  //here it must be the renderer of the sprites  in the mode 2,  
   return 0;
 }
 
@@ -191,6 +195,7 @@ BlockUnit* powerblockA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*17, 
 BlockUnit* powerblockA2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*23, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*24, BLOCKSIZE*7});
 BlockUnit* PipeColA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*29, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*31, BLOCKSIZE*14});
 
+
 //second (pipes)
 BlockUnit* ground2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*32, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*71, BLOCKSIZE*17});
 BlockUnit* PipeColB1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*41, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*43, BLOCKSIZE*14});
@@ -198,14 +203,16 @@ BlockUnit* PipeColB2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*49, BLO
 BlockUnit* PipeColB3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*59, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*61, BLOCKSIZE*14});
 BlockUnit* hidPowBlock1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*67, BLOCKSIZE*9}, (Vector2){BLOCKSIZE*68, BLOCKSIZE*10});
 
+
 //third (midlevel 1)
 BlockUnit* ground3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*73, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*88, BLOCKSIZE*17});
 BlockUnit* platformB1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*80, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*83, BLOCKSIZE*11});
 BlockUnit* platformB2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*83, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*92, BLOCKSIZE*7});
 BlockUnit* platformB3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*95, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*99, BLOCKSIZE*7});
 
+
 //fourth (midlevel 2)
-BlockUnit* ground4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*90, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*154, BLOCKSIZE*17});
+BlockUnit* ground4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*90, BLOCKSIZE*14}, (Vector2){BLOCKSIZE*156, BLOCKSIZE*17});
 BlockUnit* IndvBlock1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*98, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*99, BLOCKSIZE*11});
 BlockUnit* platformC1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*104, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*106, BLOCKSIZE*11});
 BlockUnit* PowBlockA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*110, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*111, BLOCKSIZE*11});
@@ -218,17 +225,63 @@ BlockUnit* platformC2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*124, B
 BlockUnit* platformC3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*130, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*134, BLOCKSIZE*7});
 BlockUnit* platformC4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*131, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*133, BLOCKSIZE*11});
 
-//NOTE: do the end of the level and the freaking block stairs, remenber colblock is literally that unbreakable structural block
+BlockUnit* StairA1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*137, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*141, BLOCKSIZE*14});
+BlockUnit* StairA2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*138, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*141, BLOCKSIZE*13});
+BlockUnit* StairA3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*139, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*141, BLOCKSIZE*12});
+BlockUnit* StairA4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*140, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*141, BLOCKSIZE*11});
+
+BlockUnit* StairB1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*143, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*147, BLOCKSIZE*14});
+BlockUnit* StairB2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*143, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*146, BLOCKSIZE*13});
+BlockUnit* StairB3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*143, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*145, BLOCKSIZE*12});
+BlockUnit* StairB4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*143, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*144, BLOCKSIZE*11});
+
+BlockUnit* StairC1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*151, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*156, BLOCKSIZE*14});
+BlockUnit* StairC2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*152, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*156, BLOCKSIZE*13});
+BlockUnit* StairC3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*153, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*156, BLOCKSIZE*12});
+BlockUnit* StairC4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*154, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*156, BLOCKSIZE*11});
 
 
-//52  block structures for the whole level TBH :(
+//end of the level
+BlockUnit* ground5 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*158, BLOCKSIZE*14},  (Vector2){BLOCKSIZE*211, BLOCKSIZE*17});
+BlockUnit* StairD1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*158, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*162, BLOCKSIZE*14});
+BlockUnit* StairD2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*158, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*161, BLOCKSIZE*13});
+BlockUnit* StairD3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*158, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*160, BLOCKSIZE*12});
+BlockUnit* StairD4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*158, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*159, BLOCKSIZE*11});
+
+BlockUnit* PipeColC1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*166, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*168, BLOCKSIZE*14});
+BlockUnit* platformD1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*171, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*175, BLOCKSIZE*11});
+BlockUnit* PipeColC2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*183, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*185, BLOCKSIZE*14});
+
+BlockUnit* StairE1 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*185, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*14});
+BlockUnit* StairE2 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*186, BLOCKSIZE*12}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*13});
+BlockUnit* StairE3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*187, BLOCKSIZE*11}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*12});
+BlockUnit* StairE4 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*188, BLOCKSIZE*10}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*11});
+BlockUnit* StairE5 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*189, BLOCKSIZE*9}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*10});
+BlockUnit* StairE6 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*190, BLOCKSIZE*8}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*9});
+BlockUnit* StairE7 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*191, BLOCKSIZE*7}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*8});
+BlockUnit* StairE8 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*192, BLOCKSIZE*6}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*7});
+BlockUnit* StairE9 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*193, BLOCKSIZE*5}, (Vector2){BLOCKSIZE*195, BLOCKSIZE*6});
+
+//the pole hardblock
+BlockUnit* IndvBlock3 = MakeBlockStructure(the_Block, (Vector2){BLOCKSIZE*204, BLOCKSIZE*13}, (Vector2){BLOCKSIZE*205, BLOCKSIZE*14});
+
+//LEVEEEEELL BLOCKS DONEEEEEEE!!!!!!!! After almost 3 weeks doing nothing but writing it
+//55  block structures for the whole level TBH :(
 //NOTE: since this is meant to be the top left corner for setting the measurements of each blockstructure the x coordinate must go ascending and the y coordinate descending, if not then it would be instant crash
 
 //first bill of setting blocktype
 SBTall(ground1, GroundBlock); SBTall(platformA1, BreakableBlock);
 SBT(platformA1, 0, 1, PowerBlock); SBT(platformA1, 0, 3, PowerBlock); SBTall(powerblockA1, PowerBlock); SBTall(powerblockA2, PowerBlock); 
 SBTall(PipeColA1, PipeCol); SBTall(ground2, GroundBlock); SBTall(PipeColB1, PipeCol); SBTall(PipeColB2, PipeCol); SBTall(PipeColB3, PipeCol); SBTall(hidPowBlock1, PowerBlock); SBTall(ground3, GroundBlock); SBTall(ground4, GroundBlock); SBTall(platformB1, BreakableBlock); SBT(platformB1, 0, 1, PowerBlock); SBTall(platformB2, BreakableBlock); SBTall(platformB3, BreakableBlock); SBT(platformB3, 0, 3, PowerBlock); SBTall(IndvBlock1, BreakableBlock); SBTall(PowBlockA1, PowerBlock); SBTall(PowBlockA2, PowerBlock); SBTall(PowBlockA3, PowerBlock); SBTall(PowBlockA4, PowerBlock); SBTall(IndvBlock2, BreakableBlock); SBTall(platformC2, BreakableBlock); SBTall(platformC3, BreakableBlock); SBT(platformC3, 0, 1, PowerBlock); SBT(platformC3, 0, 2, PowerBlock);
-SBTall(platformC4, BreakableBlock); SBTall(platformC1, BreakableBlock);
+SBTall(platformC4, BreakableBlock); SBTall(platformC1, BreakableBlock); SBTall(ground5, GroundBlock); SBTall(PipeColC1, PipeCol); 
+SBTall(platformD1, BreakableBlock); SBT(platformD1, 0, 2, PowerBlock); SBTall(PipeColC2, PipeCol); SBTall(IndvBlock3, HardBlock);
+
+//Stairs blockstructs must be separated from others, why? Waaaay too much of the same, code turns into nonsense
+SBTall(StairA1, HardBlock); SBTall(StairA2, HardBlock);  SBTall(StairA3, HardBlock); SBTall(StairA4, HardBlock); SBTall(StairB1, HardBlock); SBTall(StairB2, HardBlock);  SBTall(StairB3, HardBlock); SBTall(StairB4, HardBlock); SBTall(StairC1, HardBlock); SBTall(StairC2, HardBlock);  SBTall(StairC3, HardBlock); SBTall(StairC4, HardBlock);
+SBTall(StairD1, HardBlock); SBTall(StairD2, HardBlock);  SBTall(StairD3, HardBlock); SBTall(StairD4, HardBlock);
+SBTall(StairE1, HardBlock); SBTall(StairE2, HardBlock); SBTall(StairE3, HardBlock); SBTall(StairE4, HardBlock);
+SBTall(StairE5, HardBlock); SBTall(StairE6, HardBlock); SBTall(StairE7, HardBlock); SBTall(StairE8, HardBlock); SBTall(StairE9, HardBlock);
+
   while (!WindowShouldClose()) {
   /*       GGGG I  CCCC
    L   OOO G       C
@@ -255,8 +308,20 @@ SBTall(platformC4, BreakableBlock); SBTall(platformC1, BreakableBlock);
   P1 = ResolveCollision(P1, platformB3); P1 = ResolveCollision(P1, IndvBlock1); P1 = ResolveCollision(P1, PowBlockA1);
   P1 = ResolveCollision(P1, platformC1); P1 = ResolveCollision(P1, PowBlockA2); P1 = ResolveCollision(P1, PowBlockA3);
   P1 = ResolveCollision(P1, PowBlockA4); P1 = ResolveCollision(P1, IndvBlock2); P1 = ResolveCollision(P1, platformC2);
-  P1 = ResolveCollision(P1, platformC3); P1 = ResolveCollision(P1, platformC4);
- 
+  P1 = ResolveCollision(P1, platformC3); P1 = ResolveCollision(P1, platformC4); P1 = ResolveCollision(P1, StairA1);
+  P1 = ResolveCollision(P1, StairA2);    P1 = ResolveCollision(P1, StairA3);    P1 = ResolveCollision(P1, StairA4);
+  P1 = ResolveCollision(P1, StairB1);    P1 = ResolveCollision(P1, StairB2);    P1 = ResolveCollision(P1, StairB3);  
+  P1 = ResolveCollision(P1, StairB4);    P1 = ResolveCollision(P1, StairC1);    P1 = ResolveCollision(P1, StairC2); 
+  P1 = ResolveCollision(P1, StairC3);    P1 = ResolveCollision(P1, StairC4);    P1 = ResolveCollision(P1, ground5);
+  P1 = ResolveCollision(P1, StairD1);    P1 = ResolveCollision(P1, StairD2);    P1 = ResolveCollision(P1, StairD3); 
+  P1 = ResolveCollision(P1, StairD4);    P1 = ResolveCollision(P1, PipeColC1);  P1 = ResolveCollision(P1, platformD1);
+  P1 = ResolveCollision(P1, PipeColC2);  P1 = ResolveCollision(P1, IndvBlock3);
+
+
+  P1 = ResolveCollision(P1, StairE1); P1 = ResolveCollision(P1, StairE2); P1 = ResolveCollision(P1, StairE3);
+  P1 = ResolveCollision(P1, StairE4); P1 = ResolveCollision(P1, StairE5); P1 = ResolveCollision(P1, StairE6);
+  P1 = ResolveCollision(P1, StairE7); P1 = ResolveCollision(P1, StairE8); P1 = ResolveCollision(P1, StairE9);
+
   printf("%f\n", P1.Xaccel);
   double center_POV = camera.target.x + 300.0f; //300 is a magic num, somehow it works to not make the player turn back
   printf("%f\n", center_POV);
@@ -277,8 +342,16 @@ SBTall(platformC4, BreakableBlock); SBTall(platformC1, BreakableBlock);
   //Block render
   DrawBlockCol(ground1,1); DrawBlockCol(platformA1,1); DrawBlockCol(powerblockA1,1); DrawBlockCol(powerblockA2,1); DrawBlockCol(PipeColA1,1);
   DrawBlockCol(ground2,1); DrawBlockCol(PipeColB1,1); DrawBlockCol(PipeColB2,1); DrawBlockCol(PipeColB3,1); 
-  DrawBlockCol(ground3,1);DrawBlockCol(ground4,0); DrawBlockCol(platformB1, 1); DrawBlockCol(platformB2, 1); DrawBlockCol(platformB3, 1);
-  DrawBlockCol(IndvBlock1,1);DrawBlockCol(platformC1,1); DrawBlockCol(PowBlockA1,1); DrawBlockCol(PowBlockA2,1);DrawBlockCol(PowBlockA3,1); DrawBlockCol(PowBlockA4,1);DrawBlockCol(IndvBlock2,1); DrawBlockCol(platformC2,1);DrawBlockCol(platformC3,1);DrawBlockCol(platformC4,1);
+  DrawBlockCol(ground3,1);DrawBlockCol(ground4,1); DrawBlockCol(platformB1, 1); DrawBlockCol(platformB2, 1); DrawBlockCol(platformB3, 1);
+  DrawBlockCol(IndvBlock1,1);DrawBlockCol(platformC1,1); DrawBlockCol(PowBlockA1,1); DrawBlockCol(PowBlockA2,1);DrawBlockCol(PowBlockA3,1);
+  DrawBlockCol(PowBlockA4,1);DrawBlockCol(IndvBlock2,1); DrawBlockCol(platformC2,1);DrawBlockCol(platformC3,1);DrawBlockCol(platformC4,1); 
+  DrawBlockCol(StairA1,1); DrawBlockCol(StairA2,1); DrawBlockCol(StairA3,1); DrawBlockCol(StairA4,1);DrawBlockCol(StairB1,1); 
+  DrawBlockCol(StairB2,1); DrawBlockCol(StairB3,1); DrawBlockCol(StairB4,1); DrawBlockCol(StairC1,1); DrawBlockCol(StairC2,1); 
+  DrawBlockCol(StairC3,1); DrawBlockCol(StairC4,1); DrawBlockCol(ground5,1); DrawBlockCol(StairD1,1);
+  DrawBlockCol(StairD2,1); DrawBlockCol(StairD3,1); DrawBlockCol(StairD4,1); DrawBlockCol(PipeColC1,1); DrawBlockCol(platformD1,1); 
+  DrawBlockCol(PipeColC2,1); DrawBlockCol(StairE1,1); DrawBlockCol(StairE2,1); DrawBlockCol(StairE3,1); DrawBlockCol(StairE4,1);
+  DrawBlockCol(StairE5,1); DrawBlockCol(StairE6,1); DrawBlockCol(StairE7,1); DrawBlockCol(StairE8,1); DrawBlockCol(StairE9,1);
+  DrawBlockCol(IndvBlock3,1);
   if (hidPowBlock1[0].type == PowerBlock) { } else {DrawBlockCol(hidPowBlock1, 1); }
   EndDrawing();
   EndMode2D();
@@ -288,6 +361,10 @@ free(ground1); free(ground2); free(ground3); free(ground4); free(platformA1); fr
 free(PipeColB1); free(PipeColB2); free(PipeColB3); free(hidPowBlock1); free(platformB1); free(platformB2); free(platformB3); free(IndvBlock1);
 free(platformC1); free(PowBlockA1); free(PowBlockA2); free(PowBlockA3); free(PowBlockA4); free(IndvBlock2); free(platformC2); free(platformC3);
 free(platformC4);
+free(StairA1); free(StairA2); free(StairA3); free(StairA4); free(StairB1); free(StairB2); free(StairB3); free(StairB4);
+free(StairC1); free(StairC2); free(StairC3); free(StairC4); free(StairD1); free(StairD2); free(StairD3); free(StairD4);
+free(StairE1); free(StairE2); free(StairE3); free(StairE4); free(StairE5); free(StairE6); free(StairE7); free(StairE8);
+free(StairE9); free(PipeColC1); free(platformD1); free(PipeColC2); free(IndvBlock3);  
 return 0;
 }
 
